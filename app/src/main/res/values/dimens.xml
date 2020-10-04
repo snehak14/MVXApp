@@ -1,0 +1,13 @@
+<resources>
+    <dimen name="splash_logo_width">@dimen/_150sdp</dimen>
+    <dimen name="splash_logo_height">@dimen/_36sdp</dimen>
+    <dimen name="login_logo_width">@dimen/_150sdp</dimen>
+    <dimen name="login_logo_height">@dimen/_36sdp</dimen>
+    <dimen name="sync_logo_width">@dimen/_95sdp</dimen>
+    <dimen name="sync_logo_height">@dimen/_23sdp</dimen>
+    <dimen name="dashboard_logo_width">@dimen/_95sdp</dimen>
+    <dimen name="dashboard_logo_height">@dimen/_23sdp</dimen>
+    <dimen name="dashboard_toolbar_height">@dimen/_35sdp</dimen>
+    <dimen name="hamburger_menu_logo_height">@dimen/_20sdp</dimen>
+    <dimen name="hamburger_menu_logo_width">@dimen/_100sdp</dimen>
+</resources>

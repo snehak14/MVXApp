@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/name_edtxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/name_entry"
+        android:textSize="@dimen/_10ssp"
+        android:drawableStart="@drawable/name_icon"
+        android:drawablePadding="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:inputType="text"
+        android:background="@drawable/rectangle_border_bg"
+        />
+
+    <EditText
+        android:id="@+id/emailid_edtxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email_entry"
+        android:textSize="@dimen/_10ssp"
+        android:drawableStart="@drawable/email_small_icon"
+        android:drawablePadding="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/rectangle_border_bg"
+        />
+
+    <EditText
+        android:id="@+id/username_edtxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/username_entry"
+        android:textSize="@dimen/_10ssp"
+        android:drawableStart="@drawable/email_small_icon"
+        android:drawablePadding="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:inputType="text"
+        android:background="@drawable/rectangle_border_bg"
+        />
+
+    <EditText
+        android:id="@+id/password_edtxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:textSize="@dimen/_10ssp"
+        android:drawableStart="@drawable/email_small_icon"
+        android:drawablePadding="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:inputType="textPassword"
+        android:background="@drawable/rectangle_border_bg"
+        />
+
+    <EditText
+        android:id="@+id/address_edtxt"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:hint="@string/address_entry"
+        android:textSize="@dimen/_10ssp"
+        android:drawableStart="@drawable/email_small_icon"
+        android:drawablePadding="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:inputType="textPostalAddress"
+        android:background="@drawable/rectangle_border_bg"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:weightSum="2">
+
+    <EditText
+        android:id="@+id/age_edtxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".5"
+        android:hint="@string/age_entry"
+        android:textSize="@dimen/_10ssp"
+        android:drawableStart="@drawable/email_small_icon"
+        android:drawablePadding="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:inputType="number"
+        android:background="@drawable/rectangle_border_bg"
+        />
+
+    <EditText
+        android:id="@+id/mobile_edtxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:hint="@string/mobile_entry"
+        android:textSize="@dimen/_10ssp"
+        android:drawableStart="@drawable/email_small_icon"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:drawablePadding="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:inputType="number"
+        android:ems="10"
+        android:background="@drawable/rectangle_border_bg"
+        />
+
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/select_entrytype"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/email_small_icon"
+        android:drawablePadding="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:background="@drawable/rectangle_border_bg"
+        android:entries="@array/select_entry_arrays"
+        android:prompt="@string/selectentry_entry" />
+
+    <Button
+        android:id="@+id/signup_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button_field"
+        android:text="@string/signup_title"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/_10sdp"
+        />
+
+
+</LinearLayout>

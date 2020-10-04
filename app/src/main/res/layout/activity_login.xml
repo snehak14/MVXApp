@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg"
+    android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/headerImg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/loginlogo"
+        />
+
+    <ImageView
+        android:id="@+id/realityImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/headerImg"
+        android:src="@drawable/realty_2020"
+        android:layout_centerInParent="true"
+        />
+
+    <ImageView
+        android:id="@+id/cylinderImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/login_frame"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/headerImg"
+        />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs_login"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_below="@+id/realityImg"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/tab_indicator"
+        app:tabIndicatorFullWidth="true"
+        app:tabMaxWidth="0dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/tab_selected"
+        app:tabTextAppearance="@style/CustomTextAppearanceTab"
+        app:tabTextColor="@color/tab_unselected" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_below="@+id/tabs_login"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+
+    </androidx.viewpager.widget.ViewPager>
+
+    <ImageView
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        android:layout_marginEnd="-18dp"
+        android:src="@drawable/reception_img_login" />
+
+    <ImageView
+        android:id="@+id/eduImg"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_80sdp"
+        android:src="@drawable/edu_image_login"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

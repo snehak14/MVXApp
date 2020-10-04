@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "932583654213",
+    "firebase_url": "https://megaavirtualexpo.firebaseio.com",
+    "project_id": "megaavirtualexpo",
+    "storage_bucket": "megaavirtualexpo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932583654213:android:ac61bf38739a9fafe3742c",
+        "android_client_info": {
+          "package_name": "com.mvxapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "932583654213-lv9n48ms51q6uai426tutdtchet8n47b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mvxapp",
+            "certificate_hash": "0b142a0687544a99a17fdd1fbe5f681ce92d55f2"
+          }
+        },
+        {
+          "client_id": "932583654213-edjr6hni7qr4tbt4p8dcglercm7va4b4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfqWOAOxNAFwwYebevwN55b8vT7uLimy4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "932583654213-edjr6hni7qr4tbt4p8dcglercm7va4b4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
