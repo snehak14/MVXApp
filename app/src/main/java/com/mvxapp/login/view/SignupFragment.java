@@ -103,6 +103,27 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
     }
 
     @OnClick({signup_btn})
+    public void validateData(){
+        if (mNameText.getText().toString().trim() == null || mNameText.getText().toString().length() == 0){
+            mNameText.setError("Please enter Name");
+        } else if (mEmailText.getText().toString() == null || mEmailText.getText().toString().equalsIgnoreCase("")){
+            mEmailText.setError("Please enter Email Id");
+        } else if (mUsernameText.getText().toString() == null || mUsernameText.getText().toString().equalsIgnoreCase("")){
+            mUsernameText.setError("Please enter Username");
+        } else if (mPasswordText.getText().toString() == null || mPasswordText.getText().toString().equalsIgnoreCase("")){
+            mPasswordText.setError("Please enter Password");
+        } else if (mAddressText.getText().toString() == null || mAddressText.getText().toString().equalsIgnoreCase("")){
+            mAddressText.setError("Please enter Address");
+        } else if (mAgeText.getText().toString() == null || mAgeText.getText().toString().equalsIgnoreCase("")){
+            mAgeText.setError("Please enter Age");
+        } else if (mMobileText.getText().toString() == null || mMobileText.getText().toString().equalsIgnoreCase("")){
+            mMobileText.setError("Please enter Mobile Number");
+        } else if (mEntryTypeSelect.getSelectedItem().toString() == null || mEntryTypeSelect.getSelectedItem().toString().equalsIgnoreCase(mContext.getString(R.string.prompt_entry))){
+            Toast.makeText(mContext, "Please select Entry Type", Toast.LENGTH_SHORT).show();
+        } else {
+            callRegisterAPI();
+        }
+    }
         public void callRegisterAPI(){
         progressBar = new ProgressDialog(mContext);
         progressBar.setCancelable(false);//you can cancel it by pressing back button
@@ -227,7 +248,7 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
 
         String countryCode = GetCountryZipCode();
         String contactNum = registerData.getData().getMobile().toString();
-        Long mobileNumber = Long.parseLong("91"+contactNum);
+        Long mobileNumber = Long.parseLong(countryCode+contactNum);
 
         mRegisterPresenter = new RegisterPresenterImpl(this, new GetRegisterInteractorImpl(), mContext);
         mRegisterPresenter.resendOtp(mobileNumber);
@@ -255,7 +276,7 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
             e.printStackTrace();
         }
         try {
-            paramObject.put("mobile", "91" + registerData.getData().getMobile() + "");
+            paramObject.put("mobile", countryCode + registerData.getData().getMobile() + "");
             paramObject.put("otp", otp);
             paramObject.put("user", userData);
         } catch (JSONException e) {

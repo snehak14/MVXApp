@@ -18,6 +18,8 @@ public class LoginActivity extends BaseActivity {
 
     private TabLayout mTabLayout;
 
+    ViewPager mViewPager;
+
     @Override
     protected void networkState(boolean netAvailable) {
 
@@ -36,7 +38,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initView() {
-        ViewPager mViewPager = findViewById(R.id.viewpager_login);
+        mViewPager = findViewById(R.id.viewpager_login);
         setupViewPager(mViewPager);
 
         mTabLayout = findViewById(R.id.tabs_login);

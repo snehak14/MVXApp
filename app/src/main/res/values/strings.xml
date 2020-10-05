@@ -27,6 +27,8 @@
     <string name="send_btn">Submit</string>
     <string name="otp_entry">Enter OTP</string>
 
+    <string name="prompt_entry">Select Entry Type</string>
+
     <string-array name="select_entry_arrays">
         <item>Select Entry Type</item>
         <item>Buyer</item>

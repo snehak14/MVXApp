@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/name_entry"
         android:textSize="@dimen/_10ssp"
+        android:text=""
         android:drawableStart="@drawable/name_icon"
         android:drawablePadding="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
@@ -122,7 +123,7 @@
         android:drawablePadding="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:padding="@dimen/_5sdp"
-        android:background="@drawable/rectangle_border_bg"
+        android:background="@drawable/spinner_background"
         android:entries="@array/select_entry_arrays"
         android:prompt="@string/selectentry_entry" />
 

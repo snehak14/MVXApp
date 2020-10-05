@@ -4,17 +4,26 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.facebook.AccessToken;
@@ -22,11 +31,12 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -36,12 +46,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -50,25 +56,20 @@ import com.mvxapp.home.HomeActivity;
 import com.mvxapp.login.listener.LoginContract;
 import com.mvxapp.login.model.LoginResponseData;
 import com.mvxapp.login.presenter.GetLoginInteractorImpl;
-import com.mvxapp.login.presenter.GetRegisterInteractorImpl;
 import com.mvxapp.login.presenter.LoginPresenterImpl;
-import com.mvxapp.login.presenter.RegisterPresenterImpl;
 import com.mvxapp.utils.MVXUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-
-import java.util.Objects;
-import java.util.concurrent.Executor;
 
 public class LoginFragment extends Fragment implements LoginContract.LoginView, GoogleApiClient.OnConnectionFailedListener {
     private static final String LOG_TAG = LoginFragment.class.getSimpleName();
@@ -80,17 +81,16 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
     @BindView(R.id.pass_edtxt)
     EditText mPasswordText;
 
+    @BindView(R.id.signupquery_txt)
+    TextView mSignUpText;
+
     private LoginButton loginButton;
 
     private ProgressDialog progressBar;
 
-    private LoginContract.presenter mLoginPresenter;
-
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private ProfileTracker profileTracker;
-
-    private SignInButton signInButton;
 
     //a constant for detecting the login intent result
     private static final int RC_SIGN_IN = 234;
@@ -139,8 +139,10 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
         accessTokenTracker.startTracking();
         profileTracker.startTracking();
 
+        mAuth = FirebaseAuth.getInstance();
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("932583654213-lv9n48ms51q6uai426tutdtchet8n47b.apps.googleusercontent.com")
+                .requestIdToken("932583654213-edjr6hni7qr4tbt4p8dcglercm7va4b4.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
@@ -154,6 +156,7 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
 //                .build();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -163,29 +166,46 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
 
         MVXUtils.hideStatusBar((Activity) mContext);
 
-        signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-
-                //starting the activity for result
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-            }
-
+        SignInButton signInButton = rootView.findViewById(R.id.sign_in_button);
+        signInButton.setOnClickListener(v -> {
+            signIn();
         });
+
+        initView(rootView);
 
         return rootView;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void initView(View rootView) {
+        SpannableString ss = new SpannableString(mContext.getString(R.string.signup_questxt));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NotNull View textView) {
+                ((LoginActivity) Objects.requireNonNull(getActivity())).mViewPager.setCurrentItem(1);
+            }
+            @Override
+            public void updateDrawState(@NotNull TextPaint ds) {
+                super.updateDrawState(ds);
+               // ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(clickableSpan, 22, 30, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+        mSignUpText.setText(ss);
+        mSignUpText.setMovementMethod(LinkMovementMethod.getInstance());
+        mSignUpText.setHighlightColor(mContext.getColor(R.color.tab_indicator));
+    }
+
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loginButton = view.findViewById(R.id.login_button);
 
        // loginButton.setReadPermissions("user_friends");
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, callback);
+        loginButton.setLoginBehavior(LoginBehavior.NATIVE_WITH_FALLBACK);
 
     }
 
@@ -196,7 +216,14 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
 
     @OnClick({R.id.googlelogin_btn})
     public void callGoogleLogin(){
-        signInButton.performClick();
+        signIn();
+    }
+
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+
+        //starting the activity for result
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @OnClick({R.id.login_btn})
@@ -217,7 +244,7 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
             e.printStackTrace();
         }
         RequestBody loginDetail = RequestBody.create(MediaType.parse("application/json"), paramObject.toString());
-        mLoginPresenter = new LoginPresenterImpl(this, new GetLoginInteractorImpl(), mContext);
+        LoginContract.presenter mLoginPresenter = new LoginPresenterImpl(this, new GetLoginInteractorImpl(), mContext);
         mLoginPresenter.requestLogin(loginDetail);
     }
 
@@ -271,7 +298,7 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
                 //authenticating with firebase
-                firebaseAuthWithGoogle(account);
+                firebaseAuthWithGoogle(Objects.requireNonNull(account));
             } catch (ApiException e) {
                 Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -288,12 +315,13 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
 
         //Now using firebase we are signing in the user here
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener((Executor) this, task -> {
+                .addOnCompleteListener((Activity) mContext, task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         Toast.makeText(mContext, "User Signed In", Toast.LENGTH_SHORT).show();
+                        mContext.startActivity(new Intent(mContext, HomeActivity.class));
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());

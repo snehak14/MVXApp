@@ -99,7 +99,6 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
@@ -136,10 +135,7 @@
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:visibility="gone"/>
-
         <LinearLayout
             android:id="@+id/googlelogin_btn"
             android:layout_width="0dp"
@@ -162,6 +158,7 @@
                 android:textSize="@dimen/_12ssp"
                 android:layout_marginStart="@dimen/_10sdp"/>
         </LinearLayout>
+
     </LinearLayout>
 
     <TextView
@@ -172,5 +169,6 @@
         android:text="@string/signup_questxt"
         android:gravity="center_horizontal"
         android:layout_marginTop="@dimen/_10sdp"
+        android:textColorLink="@color/tab_indicator"
         />
 </LinearLayout>
