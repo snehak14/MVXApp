@@ -4,6 +4,8 @@
     <string name="facebook_app_id">331419751527566</string>
     <string name="fb_login_protocol_scheme">fb331419751527566</string>
 
+    <string name="game_view_content_description">Game view</string>
+
     <string name="login_title">Log in</string>
     <string name="signup_title">Sign up</string>
     <string name="login_text">Enter your registered emailid or contact number and password to login into your account</string>

@@ -2,6 +2,7 @@ package com.mvxapp.login.view;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -58,6 +59,7 @@ import com.mvxapp.login.model.LoginResponseData;
 import com.mvxapp.login.presenter.GetLoginInteractorImpl;
 import com.mvxapp.login.presenter.LoginPresenterImpl;
 import com.mvxapp.utils.MVXUtils;
+import com.unity3d.player.UnityPlayerActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -257,7 +259,12 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
     public void setLogin(LoginResponseData loginData) {
         progressBar.dismiss();
         Toast.makeText(mContext, loginData.getMessage(), Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(mContext, HomeActivity.class));
+        //startActivity(new Intent(mContext, HomeActivity.class));
+        Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
+        // Needed to set component to remove explicit activity entry in application's manifest
+        final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
+        myIntent.setComponent(component);
+        mContext.startActivity(myIntent);
     }
 
     @Override
@@ -271,7 +278,11 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
         public void onSuccess(LoginResult loginResult) {
             AccessToken accessToken = loginResult.getAccessToken();
             Profile profile = Profile.getCurrentProfile();
-            startActivity(new Intent(mContext, HomeActivity.class));
+            Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
+            // Needed to set component to remove explicit activity entry in application's manifest
+            final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
+            myIntent.setComponent(component);
+            mContext.startActivity(myIntent);
         }
 
         @Override
@@ -321,7 +332,11 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         Toast.makeText(mContext, "User Signed In", Toast.LENGTH_SHORT).show();
-                        mContext.startActivity(new Intent(mContext, HomeActivity.class));
+                        Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
+                        // Needed to set component to remove explicit activity entry in application's manifest
+                        final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
+                        myIntent.setComponent(component);
+                        mContext.startActivity(myIntent);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());

@@ -3,6 +3,7 @@ package com.mvxapp.login.view;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -33,6 +34,7 @@ import com.mvxapp.login.model.ResendOtpResponseData;
 import com.mvxapp.login.presenter.GetRegisterInteractorImpl;
 import com.mvxapp.login.presenter.RegisterPresenterImpl;
 import com.mvxapp.utils.MVXUtils;
+import com.unity3d.player.UnityPlayerActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -178,7 +180,11 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
         progressBar.dismiss();
         Toast.makeText(mContext, loginData.getMessage(), Toast.LENGTH_SHORT).show();
         if (mRegisterResponseData.getData().getIsEmailVerified()) {
-            startActivity(new Intent(mContext, HomeActivity.class));
+            Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
+            // Needed to set component to remove explicit activity entry in application's manifest
+            final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
+            myIntent.setComponent(component);
+            mContext.startActivity(myIntent);
         } else {
             Toast.makeText(mContext, mRegisterResponseData.getMessage(), Toast.LENGTH_SHORT).show();
         }
