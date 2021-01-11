@@ -1,16 +1,13 @@
-package com.mvxapp.login.listener;
+package com.mvxapp.profile.listener;
 
 import android.content.Context;
 
 import androidx.annotation.Nullable;
 
 import com.mvxapp.common.MessageEvent;
-import com.mvxapp.login.model.LoginResponseData;
-import com.mvxapp.login.model.RegisterResponseData;
+import com.mvxapp.profile.model.ProfileResponseData;
 
-import okhttp3.RequestBody;
-
-public interface LoginContract {
+public interface ProfileContract {
 
     /**
      * Call when user interact with the view and other when view OnDestroy()
@@ -19,7 +16,7 @@ public interface LoginContract {
 
         void onDestroy();
 
-        void requestLogin(RequestBody loginDetail);
+        void requestUserDetail(String userId);
 
         void handleEvents(MessageEvent messageEvent);
 
@@ -27,12 +24,12 @@ public interface LoginContract {
 
     /**
      * showProgress() and hideProgress() would be used for displaying and hiding the progressBar
-     * while the fetchingdata and onResponseFailure is fetched from the GetLoginIntractorImpl class
+     * while the fetchingdata and onResponseFailure is fetched from the GetProfileIntractorImpl class
      **/
-    interface LoginView {
+    interface ProfileView {
         void hideProgress();
 
-        void setLogin(LoginResponseData loginData);
+        void setUserDetail(ProfileResponseData profileData);
 
         void onResponseFailure(@Nullable Throwable throwable);
     }
@@ -40,14 +37,14 @@ public interface LoginContract {
     /**
      * Intractors are classes built for fetching data from your database, web services, or any other data source.
      **/
-    interface GetLoginIntractor {
+    interface GetProfileIntractor {
 
         interface OnFinishedListener {
-            void onFinished(LoginResponseData loginData);
+            void onFinished(ProfileResponseData profileData);
 
             void onFailure(@Nullable Throwable throwable);
         }
 
-        void getLogin(OnFinishedListener onFinishedListener, Context c, RequestBody loginDetail);
+        void getUserDetail(OnFinishedListener onFinishedListener, Context c, String userId);
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center_vertical|fill_horizontal"
+        android:start="@dimen/_5sdp"
+        android:end="@dimen/_5sdp">
+        <shape android:shape="rectangle"
+            android:tint="@color/switch_color">
+            <corners android:radius="@dimen/_10sdp" />
+            <solid android:color="@color/switchTrack" />
+            <size android:height="@dimen/_10sdp"/>
+        </shape>
+    </item>
+</layer-list>

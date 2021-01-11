@@ -180,11 +180,12 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
         progressBar.dismiss();
         Toast.makeText(mContext, loginData.getMessage(), Toast.LENGTH_SHORT).show();
         if (mRegisterResponseData.getData().getIsEmailVerified()) {
-            Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
-            // Needed to set component to remove explicit activity entry in application's manifest
-            final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
-            myIntent.setComponent(component);
-            mContext.startActivity(myIntent);
+            mContext.startActivity(new Intent(mContext, HomeActivity.class));
+//            Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
+//            // Needed to set component to remove explicit activity entry in application's manifest
+//            final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
+//            myIntent.setComponent(component);
+//            mContext.startActivity(myIntent);
         } else {
             Toast.makeText(mContext, mRegisterResponseData.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -216,6 +217,16 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
         progressBar.dismiss();
         assert throwable != null;
         Toast.makeText(mContext, "Otp Resend Failed. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnSocialFailure(@Nullable Throwable throwable) {
+
+    }
+
+    @Override
+    public void onSocialResponseFailure(@Nullable Throwable throwable) {
+
     }
 
     public void showDialog(Context activity, String msg, RegisterResponseData registerData){
@@ -252,7 +263,7 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
         progressBar.setMax(100);//sets the maximum value 100
         progressBar.show();//displays the progress bar
 
-        String countryCode = GetCountryZipCode();
+        String countryCode = MVXUtils.GetCountryZipCode(mContext);
         String contactNum = registerData.getData().getMobile().toString();
         Long mobileNumber = Long.parseLong(countryCode+contactNum);
 
@@ -269,7 +280,7 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
         progressBar.setMax(100);//sets the maximum value 100
         progressBar.show();//displays the progress bar
 
-        String countryCode = GetCountryZipCode();
+        String countryCode = MVXUtils.GetCountryZipCode(mContext);
 
         JSONObject paramObject = new JSONObject();
 
@@ -291,23 +302,5 @@ public class SignupFragment extends Fragment implements RegisterContract.Registe
         RequestBody userOtp = RequestBody.create(MediaType.parse("application/json"), paramObject.toString());
         mRegisterPresenter = new RegisterPresenterImpl(this, new GetRegisterInteractorImpl(), mContext);
         mRegisterPresenter.requestOtp(userOtp);
-    }
-
-    private String GetCountryZipCode() {
-        String CountryID = "";
-        String CountryZipCode = "";
-
-        TelephonyManager manager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        //getNetworkCountryIso
-        CountryID = manager.getSimCountryIso().toUpperCase();
-        String[] rl = this.getResources().getStringArray(R.array.CountryCodes);
-        for (int i = 0; i < rl.length; i++) {
-            String[] g = rl[i].split(",");
-            if (g[1].trim().equals(CountryID.trim())) {
-                CountryZipCode = g[0];
-                break;
-            }
-        }
-        return CountryZipCode;
     }
 }

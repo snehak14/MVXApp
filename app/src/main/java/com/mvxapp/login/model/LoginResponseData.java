@@ -13,6 +13,9 @@ public class LoginResponseData implements Parcelable {
     @SerializedName("message")
     @Expose
     private String message;
+    @SerializedName("data")
+    @Expose
+    private LoginData data;
 
     public String getToken() {
         return token;
@@ -30,9 +33,18 @@ public class LoginResponseData implements Parcelable {
         this.message = message;
     }
 
+    public LoginData getData() {
+        return data;
+    }
+
+    public void setData(LoginData data) {
+        this.data = data;
+    }
+
     protected LoginResponseData(Parcel in) {
         this.token = ((String) in.readValue((String.class.getClassLoader())));
         this.message = ((String) in.readValue((String.class.getClassLoader())));
+        this.data = ((LoginData) in.readValue((LoginData.class.getClassLoader())));
     }
 
     public static final Creator<LoginResponseData> CREATOR = new Creator<LoginResponseData>() {
@@ -56,5 +68,6 @@ public class LoginResponseData implements Parcelable {
     public void writeToParcel(Parcel dest, int i) {
         dest.writeValue(token);
         dest.writeValue(message);
+        dest.writeValue(data);
     }
 }

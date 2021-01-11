@@ -8,5 +8,5 @@
         android:bottomRightRadius="@dimen/_7sdp"
         android:topLeftRadius="@dimen/_7sdp"
         android:topRightRadius="@dimen/_7sdp" />
-    <solid android:color="#06A19E" />
+    <solid android:color="@color/tab_indicator" />
 </shape>

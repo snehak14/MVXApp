@@ -30,6 +30,22 @@
     <string name="otp_entry">Enter OTP</string>
 
     <string name="prompt_entry">Select Entry Type</string>
+    <string name="forgot_pass_txt">You will receive an OTP on registered mobile number for this email.</string>
+    <string name="submit_title">Submit</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="expobtn_txt">ENTER EXPO</string>
+    <string name="aboutbtn_txt">About Us</string>
+    <string name="about_text">Megaa Virtual Expo is an innovative way to buy and sell properties through the virtual space. \nThis Expo is a one-stop solution to all the real estate related requirements. \n1. Fast Sales \nAs there are no middlemen, buyers can connect directly with the builders to get the information about their latest projects and also finalize deals immediately. \n2. Networking \nBuyers can connect with developers, interior designers and all other property related requirements directly and make a strong network for future projects. \n3. Finance \nYou can also connect with banks for loans and other financial requirements directly through the event.</string>
+    <string name="profile_txt">|&#160;&#160;&#160;&#160;Profile</string>
+    <string name="logout_txt">|&#160;&#160;&#160;&#160;Log Out</string>
+    <string name="feedback_txt">|&#160;&#160;&#160;&#160;Feedback</string>
+    <string name="sound_txt">|&#160;&#160;&#160;&#160;Sound</string>
+    <string name="profilehead_txt">Profile</string>
+    <string name="contact_number">Contact Number :</string>
+    <string name="address">Address :&#160;</string>
+    <string name="city">City :&#160;</string>
+    <string name="state">State :&#160;</string>
+    <string name="entry_type">Entry Type :&#160;</string>
 
     <string-array name="select_entry_arrays">
         <item>Select Entry Type</item>

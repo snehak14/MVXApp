@@ -27,6 +27,8 @@ public interface RegisterContract {
         void requestOtp(RequestBody userOtp);
 
         void resendOtp(Long mobile);
+
+        void socialLogin(RequestBody userDetail);
     }
 
     /**
@@ -47,6 +49,10 @@ public interface RegisterContract {
         void resendOtp(ResendOtpResponseData resendOtpResponseData);
 
         void onResendFailure(@Nullable Throwable throwable);
+
+        void OnSocialFailure(@Nullable Throwable throwable);
+
+        void onSocialResponseFailure(@Nullable Throwable throwable);
     }
 
     /**
@@ -66,6 +72,10 @@ public interface RegisterContract {
             void onFinishedResendOtp(ResendOtpResponseData resendOtpResponseData);
 
             void onFailureResendOtp(@Nullable Throwable throwable);
+
+            void onSocialFinished(RegisterResponseData registerResponseData);
+
+            void onSocialFailure(@Nullable Throwable throwable);
         }
 
         void getRegister(OnFinishedListener onFinishedListener, Context c, RequestBody userDetail);
@@ -73,5 +83,7 @@ public interface RegisterContract {
         void OtpVerify(OnFinishedListener onFinishedListener, Context c, RequestBody userOtp);
 
         void ResendOtp(OnFinishedListener onFinishedListener, Context c, Long mobileNumber);
+
+        void SocialLogin(OnFinishedListener onFinishedListener, Context c, RequestBody userDetail);
     }
 }

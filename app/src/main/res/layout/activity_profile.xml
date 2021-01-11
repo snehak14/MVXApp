@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/headerImg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/loginlogo" />
+
+    <ImageView
+        android:id="@+id/realityImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/headerImg"
+        android:src="@drawable/realty_2020" />
+
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:gravity="center"
+        android:layout_below="@+id/realityImg"
+        android:text="@string/profilehead_txt"
+        android:textColor="@color/tab_indicator"
+        android:textSize="@dimen/_20ssp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_below="@+id/headerText">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/userName_Txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/user_name"
+                android:drawablePadding="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:background="@drawable/rectangle_border_bg"/>
+
+            <TextView
+                android:id="@+id/userEmail_Txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/userName_Txt"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/email_icon"
+                android:drawablePadding="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:background="@drawable/rectangle_border_bg"
+                />
+
+            <TextView
+                android:id="@+id/userAddress_Txt"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_below="@+id/userEmail_Txt"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/email_icon"
+                android:drawablePadding="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:background="@drawable/rectangle_border_bg"/>
+
+            <LinearLayout
+                android:id="@+id/info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/userAddress_Txt"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/userAge_Txt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:textSize="@dimen/_12ssp"
+                    android:textColor="@color/black"
+                    android:drawableStart="@drawable/email_icon"
+                    android:drawablePadding="@dimen/_10sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:background="@drawable/rectangle_border_bg"
+                    />
+
+                <TextView
+                    android:id="@+id/userPhone_Txt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:textSize="@dimen/_12ssp"
+                    android:textColor="@color/black"
+                    android:drawableStart="@drawable/email_icon"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:drawablePadding="@dimen/_10sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:background="@drawable/rectangle_border_bg"
+                    />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/userType_Txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/info_layout"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/email_icon"
+                android:drawablePadding="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:background="@drawable/rectangle_border_bg"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <ImageView
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        android:layout_marginEnd="-18dp"
+        android:src="@drawable/reception_img_login" />
+
+    <ImageView
+        android:id="@+id/eduImg"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_80sdp"
+        android:src="@drawable/edu_image_login"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

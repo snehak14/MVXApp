@@ -46,6 +46,12 @@ public class GetRegisterInteractorImpl implements RegisterContract.GetRegisterIn
 
         getResendOtpObservable(mobileNumber).subscribe(getResendOtpObserver());
     }
+
+    @Override
+    public void SocialLogin(OnFinishedListener onFinishedListener, Context c, RequestBody userDetail) {
+        getSocialLoginObservable().subscribe(getObserver());
+    }
+
     private Observable<RegisterResponseData> getObservable() {
         APIInterface mApiInterface = EndPointUtils.getUserInfoInterface();
         return mApiInterface
@@ -79,6 +85,14 @@ public class GetRegisterInteractorImpl implements RegisterContract.GetRegisterIn
                 Log.d(LOG_TAG, "Completed");
             }
         };
+    }
+
+    private Observable<RegisterResponseData> getSocialLoginObservable() {
+        APIInterface mApiInterface = EndPointUtils.getUserInfoInterface();
+        return mApiInterface
+                .loginUserSocial(mUserDetail)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     private Observable<LoginResponseData> getOtpObservable() {

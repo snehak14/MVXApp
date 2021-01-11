@@ -3,6 +3,7 @@ package com.mvxapp.login.view;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -22,7 +23,9 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void networkState(boolean netAvailable) {
-
+        if (!netAvailable){
+            Toast.makeText(this, "Internet not available. Please check and re-try", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -76,5 +79,13 @@ public class LoginActivity extends BaseActivity {
                 viewPager.setCurrentItem(position);
             }
         };
+    }
+
+    @Override
+    public void onBackPressed() {
+        // TODO Auto-generated method stub
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
     }
 }

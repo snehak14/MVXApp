@@ -2,11 +2,20 @@
 <resources>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorAccent">#FF5B5B</color>
 
     <color name="tab_indicator">#FF5B5B</color>
     <color name="tab_selected">#696969</color>
     <color name="tab_unselected">#DEE1EE</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="light_grey">#cacaca</color>
+
+    <color name="switchTrack">#ffd600</color>
+    <color name="switchTrackDisable">#90caf9</color>
+    <color name="switchTrackActive">#1565c0</color>
+    <color name="switchTrackNormal">#90caf9</color>
+    <color name="switchThumbBgActive">#1b5e20</color>
+    <color name="switchThumbActive">#ad1457</color>
+    <color name="switchThumbkNormal">#64b5f6</color>
 </resources>

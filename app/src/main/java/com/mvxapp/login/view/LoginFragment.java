@@ -1,11 +1,11 @@
 package com.mvxapp.login.view;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -13,11 +13,12 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginBehavior;
@@ -55,16 +58,21 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.mvxapp.R;
 import com.mvxapp.home.HomeActivity;
 import com.mvxapp.login.listener.LoginContract;
+import com.mvxapp.login.listener.RegisterContract;
 import com.mvxapp.login.model.LoginResponseData;
+import com.mvxapp.login.model.RegisterResponseData;
+import com.mvxapp.login.model.ResendOtpResponseData;
 import com.mvxapp.login.presenter.GetLoginInteractorImpl;
+import com.mvxapp.login.presenter.GetRegisterInteractorImpl;
 import com.mvxapp.login.presenter.LoginPresenterImpl;
+import com.mvxapp.login.presenter.RegisterPresenterImpl;
 import com.mvxapp.utils.MVXUtils;
-import com.unity3d.player.UnityPlayerActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -73,7 +81,7 @@ import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-public class LoginFragment extends Fragment implements LoginContract.LoginView, GoogleApiClient.OnConnectionFailedListener {
+public class LoginFragment extends Fragment implements LoginContract.LoginView, GoogleApiClient.OnConnectionFailedListener, RegisterContract.RegisterView {
     private static final String LOG_TAG = LoginFragment.class.getSimpleName();
     private Context mContext;
 
@@ -107,6 +115,13 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
 
     //And also a Firebase Auth object
     FirebaseAuth mAuth;
+
+    SharedPreferences sharedPreferences;
+    private LoginResponseData mLoginResponseData;
+
+    private RegisterContract.presenter mRegisterPresenter;
+    private RegisterResponseData mRegisterResponseData;
+    String get_id, get_name, get_gender, get_email, get_birthday, get_locale, get_location;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -149,13 +164,6 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(mContext, gso);
-
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-// options specified by gso.
-//        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-//                .enableAutoManage(getActivity() /* FragmentActivity */, this /* OnConnectionFailedListener */)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
-//                .build();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -174,6 +182,8 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
         });
 
         initView(rootView);
+
+        sharedPreferences = mContext.getSharedPreferences("MyPREFERENCES", Context.MODE_PRIVATE);
 
         return rootView;
     }
@@ -204,7 +214,8 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
         super.onViewCreated(view, savedInstanceState);
         loginButton = view.findViewById(R.id.login_button);
 
-       // loginButton.setReadPermissions("user_friends");
+        loginButton.setReadPermissions(Arrays.asList(
+                "public_profile", "email", "user_birthday", "user_friends"));
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, callback);
         loginButton.setLoginBehavior(LoginBehavior.NATIVE_WITH_FALLBACK);
@@ -221,12 +232,20 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
         signIn();
     }
 
+    @OnClick({R.id.forgotpass_txt})
+    public void callForgotPassword(){
+        Intent intent = new Intent(mContext, ForgotPasswordActivity.class);
+        startActivity(intent);
+    }
+
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
 
         //starting the activity for result
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
+
 
     @OnClick({R.id.login_btn})
     public void callLoginAPI(){
@@ -256,15 +275,69 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
     }
 
     @Override
+    public void setRegister(RegisterResponseData registerData) {
+        Toast.makeText(mContext, registerData.getMessage(), Toast.LENGTH_SHORT).show();
+        if (registerData != null){
+            mRegisterResponseData = registerData;
+            if (!registerData.getData().getIsEmailVerified()){
+                showDialog(mContext, "", registerData);
+            }
+        }
+    }
+
+    public void showDialog(Context activity, String msg, RegisterResponseData registerData){
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.custom_dialogbox_otp);
+        //Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        EditText otpEdit = dialog.findViewById(R.id.otp_editTxt);
+        otpEdit.setText(msg);
+
+        Button dialogBtn_cancel = dialog.findViewById(R.id.btn_resend);
+        dialogBtn_cancel.setOnClickListener(v -> {
+            callResendOTPAPI(registerData);
+            dialog.dismiss();
+        });
+
+        Button dialogBtn_okay = dialog.findViewById(R.id.btn_submit);
+        dialogBtn_okay.setOnClickListener(v -> {
+            callVerifyOTP(otpEdit.getText().toString(), registerData);
+            dialog.cancel();
+        });
+
+        dialog.show();
+    }
+
+    @Override
+    public void otpVerify(LoginResponseData loginData) {
+        progressBar.dismiss();
+        Toast.makeText(mContext, loginData.getMessage(), Toast.LENGTH_SHORT).show();
+        if (mRegisterResponseData.getData().getIsEmailVerified()) {
+            mContext.startActivity(new Intent(mContext, HomeActivity.class));
+//            Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
+//            // Needed to set component to remove explicit activity entry in application's manifest
+//            final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
+//            myIntent.setComponent(component);
+//            mContext.startActivity(myIntent);
+        } else {
+            Toast.makeText(mContext, mRegisterResponseData.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public void setLogin(LoginResponseData loginData) {
         progressBar.dismiss();
         Toast.makeText(mContext, loginData.getMessage(), Toast.LENGTH_SHORT).show();
-        //startActivity(new Intent(mContext, HomeActivity.class));
-        Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
-        // Needed to set component to remove explicit activity entry in application's manifest
-        final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
-        myIntent.setComponent(component);
-        mContext.startActivity(myIntent);
+        if (loginData != null) {
+            mLoginResponseData = loginData;
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("loginToken", mLoginResponseData.getToken());
+            editor.putString("userID", mLoginResponseData.getData().getId());
+            editor.apply();
+            mContext.startActivity(new Intent(mContext, HomeActivity.class));
+        }
     }
 
     @Override
@@ -273,16 +346,69 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
         Toast.makeText(mContext, "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onOtpFailure(@Nullable Throwable throwable) {
+        progressBar.dismiss();
+        assert throwable != null;
+        Toast.makeText(mContext, "Otp Verification Failed. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void resendOtp(ResendOtpResponseData resendOtpResponseData) {
+        progressBar.dismiss();
+        Toast.makeText(mContext, resendOtpResponseData.getMessage(), Toast.LENGTH_SHORT).show();
+        showDialog(mContext, "", mRegisterResponseData);
+    }
+
+    @Override
+    public void onResendFailure(@Nullable Throwable throwable) {
+        progressBar.dismiss();
+        assert throwable != null;
+        Toast.makeText(mContext, "Otp Resend Failed. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnSocialFailure(@Nullable Throwable throwable) {
+        progressBar.dismiss();
+        assert throwable != null;
+        Toast.makeText(mContext, "Registration Failed. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSocialResponseFailure(@Nullable Throwable throwable) {
+        progressBar.dismiss();
+        assert throwable != null;
+        Toast.makeText(mContext, "Registration Failed. Please try again.", Toast.LENGTH_SHORT).show();
+    }
+
     private FacebookCallback<LoginResult> callback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
             AccessToken accessToken = loginResult.getAccessToken();
-            Profile profile = Profile.getCurrentProfile();
-            Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
-            // Needed to set component to remove explicit activity entry in application's manifest
-            final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
-            myIntent.setComponent(component);
-            mContext.startActivity(myIntent);
+            Profile user = Profile.getCurrentProfile();
+
+            GraphRequest request = GraphRequest.newMeRequest(
+                    loginResult.getAccessToken(),
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.v("LoginActivity", response.toString());
+                            callRegisterAPI(response);
+                            // Application code
+//                            try {
+//                                String email = object.getString("email");
+//                                String birthday = object.getString("birthday");
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+                        }
+                    });
+                            Bundle parameters = new Bundle();
+                            parameters.putString("fields", "id,name,email,gender,birthday");
+                            request.setParameters(parameters);
+                            request.executeAsync();
+
+                            //mContext.startActivity(new Intent(mContext, HomeActivity.class))
         }
 
         @Override
@@ -292,9 +418,37 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
 
         @Override
         public void onError(FacebookException e) {
-
+            Toast.makeText(mContext, "Unable to login with Facebook. Please try again later.", Toast.LENGTH_SHORT).show();
         }
     };
+
+    public void callRegisterAPI(GraphResponse user){
+        progressBar = new ProgressDialog(mContext);
+        progressBar.setCancelable(false);//you can cancel it by pressing back button
+        progressBar.setMessage(mContext.getResources().getString(R.string.process_txt));
+        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressBar.setProgress(0);//initially progress is 0
+        progressBar.setMax(100);//sets the maximum value 100
+        progressBar.show();//displays the progress bar
+
+        JSONObject paramObject = new JSONObject();
+        try {
+            paramObject.put("email", user.getJSONObject().getString("email"));
+            paramObject.put("name", user.getJSONObject().getString("first_name"));
+            paramObject.put("password", "");
+            paramObject.put("mobile", 0);
+            paramObject.put("age", 0);
+            paramObject.put("city", "");
+            paramObject.put("state", "");
+            paramObject.put("address", "");
+            paramObject.put("entryType", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody userDetail = RequestBody.create(MediaType.parse("application/json"), paramObject.toString());
+        mRegisterPresenter = new RegisterPresenterImpl(this, new GetRegisterInteractorImpl(), mContext);
+        mRegisterPresenter.socialLogin(userDetail);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -331,12 +485,38 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
                         Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
 
-                        Toast.makeText(mContext, "User Signed In", Toast.LENGTH_SHORT).show();
-                        Intent myIntent = new Intent(mContext, UnityPlayerActivity.class);
-                        // Needed to set component to remove explicit activity entry in application's manifest
-                        final ComponentName component = new ComponentName(mContext, UnityPlayerActivity.class);
-                        myIntent.setComponent(component);
-                        mContext.startActivity(myIntent);
+                        progressBar = new ProgressDialog(mContext);
+                        progressBar.setCancelable(false);//you can cancel it by pressing back button
+                        progressBar.setMessage(mContext.getResources().getString(R.string.process_txt));
+                        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressBar.setProgress(0);//initially progress is 0
+                        progressBar.setMax(100);//sets the maximum value 100
+                        progressBar.show();//displays the progress bar
+                        JSONObject paramObject = new JSONObject();
+                        try {
+                            paramObject.put("email", user.getEmail());
+                            paramObject.put("name", user.getDisplayName());
+                            paramObject.put("password", "");
+                            if (user.getPhoneNumber() != null && !user.getPhoneNumber().equalsIgnoreCase("")) {
+                                paramObject.put("mobile", Long.parseLong(user.getPhoneNumber()));
+                            }
+                            else {
+                                paramObject.put("mobile", 0);
+                            }
+                            paramObject.put("age", 25);
+                            paramObject.put("city", "");
+                            paramObject.put("state", "");
+                            paramObject.put("address", "");
+                            paramObject.put("entryType", "");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        RequestBody userDetail = RequestBody.create(MediaType.parse("application/json"), paramObject.toString());
+                        mRegisterPresenter = new RegisterPresenterImpl(this, new GetRegisterInteractorImpl(), mContext);
+                        mRegisterPresenter.socialLogin(userDetail);
+
+//                        Toast.makeText(mContext, "User Signed In", Toast.LENGTH_SHORT).show();
+//                        mContext.startActivity(new Intent(mContext, HomeActivity.class));
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -367,11 +547,67 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView, 
     public void onResume() {
         super.onResume();
         Profile profile = Profile.getCurrentProfile();
-      //  startActivity(new Intent(mContext, HomeActivity.class));
+        if (mLoginResponseData != null && mLoginResponseData.getToken() != null) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("loginToken", mLoginResponseData.getToken());
+            editor.putString("userID", mLoginResponseData.getData().getId());
+            editor.apply();
+            mContext.startActivity(new Intent(mContext, HomeActivity.class));
+        }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+
+    private void callResendOTPAPI(RegisterResponseData registerData) {
+        progressBar = new ProgressDialog(mContext);
+        progressBar.setCancelable(false);//you can cancel it by pressing back button
+        progressBar.setMessage(mContext.getResources().getString(R.string.process_txt));
+        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressBar.setProgress(0);//initially progress is 0
+        progressBar.setMax(100);//sets the maximum value 100
+        progressBar.show();//displays the progress bar
+
+        String countryCode = MVXUtils.GetCountryZipCode(mContext);
+        String contactNum = registerData.getData().getMobile().toString();
+        Long mobileNumber = Long.parseLong(countryCode+contactNum);
+
+        mRegisterPresenter = new RegisterPresenterImpl(this, new GetRegisterInteractorImpl(), mContext);
+        mRegisterPresenter.resendOtp(mobileNumber);
+    }
+
+    private void callVerifyOTP(String otp, RegisterResponseData registerData) {
+        progressBar = new ProgressDialog(mContext);
+        progressBar.setCancelable(false);//you can cancel it by pressing back button
+        progressBar.setMessage(mContext.getResources().getString(R.string.process_txt));
+        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressBar.setProgress(0);//initially progress is 0
+        progressBar.setMax(100);//sets the maximum value 100
+        progressBar.show();//displays the progress bar
+
+        String countryCode = MVXUtils.GetCountryZipCode(mContext);
+
+        JSONObject paramObject = new JSONObject();
+
+        JSONObject userData = new JSONObject();
+        try {
+            userData.put("id", registerData.getData().getId());
+            userData.put("name", registerData.getData().getName());
+            userData.put("email", registerData.getData().getEmail());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+            paramObject.put("mobile", countryCode + registerData.getData().getMobile() + "");
+            paramObject.put("otp", otp);
+            paramObject.put("user", userData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody userOtp = RequestBody.create(MediaType.parse("application/json"), paramObject.toString());
+        mRegisterPresenter = new RegisterPresenterImpl(this, new GetRegisterInteractorImpl(), mContext);
+        mRegisterPresenter.requestOtp(userOtp);
     }
 }

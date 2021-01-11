@@ -45,7 +45,11 @@
         </activity>
         <activity android:name=".splash.SplashActivity2" />
         <activity android:name=".login.view.LoginActivity" />
-        <activity android:name=".home.HomeActivity"/>
+        <activity android:name=".login.view.ForgotPasswordActivity"/>
+        <activity android:name=".home.HomeActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".home.AboutActivity"/>
+        <activity android:name=".profile.view.ProfileActivity"/>
     </application>
 
 </manifest>

@@ -51,6 +51,11 @@ public class RegisterPresenterImpl implements RegisterContract.presenter, Regist
     }
 
     @Override
+    public void socialLogin(RequestBody userDetail) {
+        mGetRegisterIntractor.getRegister(this, mContext, userDetail);
+    }
+
+    @Override
     public void onFinished(RegisterResponseData userData) {
         mRegisterView.setRegister(userData);
     }
@@ -83,6 +88,18 @@ public class RegisterPresenterImpl implements RegisterContract.presenter, Regist
     public void onFailureResendOtp(@Nullable Throwable throwable) {
         if (throwable != null){
             mRegisterView.onResendFailure(throwable);
+        }
+    }
+
+    @Override
+    public void onSocialFinished(RegisterResponseData registerResponseData) {
+        mRegisterView.setRegister(registerResponseData);
+    }
+
+    @Override
+    public void onSocialFailure(@Nullable Throwable throwable) {
+        if (throwable != null) {
+            mRegisterView.onSocialResponseFailure(throwable);
         }
     }
 }
